@@ -1,0 +1,70 @@
+Wed Sep 21 20:25:53 2022
+
+
+Moral links:
+
+
+
+Triangulating prime component with 2 members:
+    flower1, acidic
+This component is a clique of cost 4
+
+Triangulating prime component with 2 members:
+    flower2, acidic
+This component is a clique of cost 4
+
+
+Total cost of triangulation for all prime components is 8
+
+
+Elimination sequence:
+
+    flower1
+    flower2
+    acidic
+
+
+Cliques:
+
+Clique 2, 2 members, table size = 4:
+    acidic, flower2
+
+Clique 1, 2 members, table size = 4:
+    acidic, flower1
+
+Total clique table size: 8
+
+
+The junction forest:
+
+Creating junction tree with clique 2 as root ...
+
+Cliques 1 and 2 linked, separator has 1 member and table size = 2:
+    acidic
+
+
+Assignment of potentials to cliques:
+
+    Node flower2 assigned to clique 2
+    Node flower1 assigned to clique 1
+    Node acidic assigned to clique 2
+
+
+Checking conditional probability potentials:
+
+    No errors found
+
+
+Beliefs for chance nodes:
+
+    flower2:
+	f          0.26
+	t          0.74
+
+    flower1:
+	f          0.74
+	t          0.26
+
+    acidic:
+	f          0.2
+	t          0.8

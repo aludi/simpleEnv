@@ -47,7 +47,6 @@ class SimpleEnv(mesa.Model):
 
     def init_item_dict(self):
         C = {}
-        get_combos = []
         valuations = list(product([0,1], repeat=len(self.Ks.domain.keys())))
         keys = list(self.Ks.domain.keys())
         for val in valuations:
@@ -81,6 +80,7 @@ class SimpleEnv(mesa.Model):
             l.append(f"{key}={str(d[key])}")
         # then update statistics
         self.item_dict[tuple(l)] += 1
+        # TODO convert this to pandas to feed into a BN generator
 
 
 

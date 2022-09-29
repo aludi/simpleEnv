@@ -21,6 +21,37 @@ class Knowledge_Structure:
         self.domain = domain(model)
         self.rules = rules(model)
 
+    def forward_chaining_from_contents(self, content_list):
+        facts_found = []
+        rules_fired = []
+        if content_list == []:
+            for rule in self.rules:
+                if rule.a_nn == "":
+                    if random.random() <= rule.p:
+                        facts_found.append((rule.c_nn, rule.c_val))
+                    else:
+                        complement_val = self.find_complement(rule.c_nn, rule.c_val)
+                        facts_found.append((rule.c_nn, complement_val))
+                    rules_fired.append(rule)
+        else:
+            present_facts = []
+            for item in content_list:
+                present_facts.append((item.node_name, item.value))
+            for rule in self.rules:
+                if (rule.a_nn, rule.a_val) in present_facts and rule not in rules_fired and (
+                rule.c_nn, rule.c_val) not in facts_found:
+                    rules_fired.append(rule)
+                    if random.random() <= rule.p:
+                        facts_found.append((rule.c_nn, rule.c_val))
+                        if (rule.c_nn,
+                            self.find_complement(rule.c_nn, rule.c_val)) in facts_found:  # by conflict, remove old fact
+                            facts_found.remove((rule.c_nn, self.find_complement(rule.c_nn, rule.c_val)))
+        print(facts_found)
+        return facts_found
+
+
+
+
     def forward_chaining(self):
         facts_found = []
         rules_fired = []
@@ -45,6 +76,8 @@ class Knowledge_Structure:
                             flag = 1
         #print(facts_found)
         return facts_found
+
+
 
     def find_complement(self, name, outcome):   # only works for binary
         if outcome == self.domain[name].outcome1:

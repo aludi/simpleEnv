@@ -27,8 +27,12 @@ class Patch(mesa.Agent):
 class Flower1(mesa.Agent):
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
+        self.node_name = "f1"
+        self.value = 1
 
 
 class Flower2(mesa.Agent):
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
+        self.node_name = "f2"
+        self.value=1

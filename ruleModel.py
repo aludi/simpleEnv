@@ -18,9 +18,8 @@ class Rule:
 
 class Knowledge_Structure:
     def __init__(self, model):
-        if model == "M1":
-            self.domain = domain(model)
-            self.rules = rules(model)
+        self.domain = domain(model)
+        self.rules = rules(model)
 
     def forward_chaining(self):
         facts_found = []
@@ -29,7 +28,7 @@ class Knowledge_Structure:
         while flag == 1:
             flag = 0
             for rule in self.rules:
-                if facts_found == [] and rule.a_nn == "":
+                if rule.a_nn == "":
                     if random.random() <= rule.p:
                         facts_found.append((rule.c_nn, rule.c_val))
                     else:
@@ -37,12 +36,15 @@ class Knowledge_Structure:
                         facts_found.append((rule.c_nn, complement_val))
                     rules_fired.append(rule)
                 else:
-                    if (rule.a_nn, rule.a_val) in facts_found and rule not in rules_fired:
+                    if (rule.a_nn, rule.a_val) in facts_found and rule not in rules_fired and (rule.c_nn, rule.c_val) not in facts_found:
                         rules_fired.append(rule)
                         if random.random() <= rule.p:
                             facts_found.append((rule.c_nn, rule.c_val))
+                            if (rule.c_nn, self.find_complement(rule.c_nn, rule.c_val)) in facts_found: # by conflict, remove old fact
+                                facts_found.remove((rule.c_nn, self.find_complement(rule.c_nn, rule.c_val)))
                             flag = 1
-            return facts_found
+        #print(facts_found)
+        return facts_found
 
     def find_complement(self, name, outcome):   # only works for binary
         if outcome == self.domain[name].outcome1:
@@ -52,7 +54,7 @@ class Knowledge_Structure:
 
 def domain(model):
     D = {}
-    if model == "M1":
+    if model == "M1" or model == "M2":
         D_list = [("acidic", 1, 0), ("f1", 0, 1), ("f2", 0, 1)]
         for (name, o1, o2) in D_list:
             D[name] = Event(name, o1, o2)
@@ -63,12 +65,18 @@ def domain(model):
 
 def rules(model):
     KB = []
-    if model == "M1":    # acidic --> f1, base --> f2
+    if model == "M1":   # acid causes some flowers to grow or not # acidic --> f1, base --> f2
         KB.append(Rule(("",""), ("acidic", 1), 0.8))
         KB.append(Rule(("acidic", 1), ("f1", 1), 0.9))
-        KB.append(Rule(("acidic",0), ("f2", 1), 0.9))
-        KB.append(Rule(("acidic",1), ("f2", 1), 0.1))
-        KB.append(Rule(("acidic",0), ("f1", 1), 0.1))
+        KB.append(Rule(("acidic", 0), ("f1", 1), 0.1))
+        KB.append(Rule(("acidic", 1), ("f2", 1), 0.1))
+        KB.append(Rule(("acidic", 0), ("f2", 1), 0.9))
+    elif model == "M2": # "flowers cause the floor to become acidic or not"
+        KB.append(Rule(("", ""), ("acidic", 1), 0.5))
+        KB.append(Rule(("", ""), ("f1", 1), 0.4))
+        KB.append(Rule(("", ""), ("f2", 1), 0.6))
+        KB.append(Rule(("f1", 1), ("acidic", 1), 0.9))
+        KB.append(Rule(("f2", 1), ("acidic", 0), 0.9))
     else:
         pass
     return KB

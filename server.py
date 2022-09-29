@@ -78,12 +78,12 @@ def agent_portrayal(agent):
 
     return portrayal
 
+def server_main_call(model):
+    grid = mesa.visualization.CanvasGrid(agent_portrayal, 50, 50, 500, 500)
 
-grid = mesa.visualization.CanvasGrid(agent_portrayal, 50, 50, 500, 500)
 
-
-server = mesa.visualization.ModularServer(
-    SimpleEnv, [grid], "Simple Env Model", {"N": 0, "width": 50, "height": 50}
-)
-server.port = 8521  # The default
-server.launch()
+    server = mesa.visualization.ModularServer(
+        SimpleEnv, [grid], "Simple Env Model", {"N": 0, "width": 50, "height": 50, "model":model}
+    )
+    server.port = 8521  # The default
+    server.launch()

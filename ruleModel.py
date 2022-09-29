@@ -25,6 +25,7 @@ class Knowledge_Structure:
         facts_found = []
         rules_fired = []
         if content_list == []:
+            present_facts = []
             for rule in self.rules:
                 if rule.a_nn == "":
                     if random.random() <= rule.p:
@@ -46,8 +47,7 @@ class Knowledge_Structure:
                         if (rule.c_nn,
                             self.find_complement(rule.c_nn, rule.c_val)) in facts_found:  # by conflict, remove old fact
                             facts_found.remove((rule.c_nn, self.find_complement(rule.c_nn, rule.c_val)))
-        print(facts_found)
-        return facts_found
+        return facts_found, present_facts
 
 
 
@@ -99,17 +99,17 @@ def domain(model):
 def rules(model):
     KB = []
     if model == "M1":   # acid causes some flowers to grow or not # acidic --> f1, base --> f2
-        KB.append(Rule(("",""), ("acidic", 1), 0.8))
-        KB.append(Rule(("acidic", 1), ("f1", 1), 0.9))
-        KB.append(Rule(("acidic", 0), ("f1", 1), 0.1))
-        KB.append(Rule(("acidic", 1), ("f2", 1), 0.1))
-        KB.append(Rule(("acidic", 0), ("f2", 1), 0.9))
+        KB.append(Rule(("",""), ("acidic", 1), 0.5))
+        KB.append(Rule(("acidic", 1), ("f1", 1), 1))
+        KB.append(Rule(("acidic", 0), ("f1", 1), 0))
+        KB.append(Rule(("acidic", 1), ("f2", 1), 0))
+        KB.append(Rule(("acidic", 0), ("f2", 1), 1))
     elif model == "M2": # "flowers cause the floor to become acidic or not"
         KB.append(Rule(("", ""), ("acidic", 1), 0.5))
         KB.append(Rule(("", ""), ("f1", 1), 0.4))
         KB.append(Rule(("", ""), ("f2", 1), 0.6))
-        KB.append(Rule(("f1", 1), ("acidic", 1), 0.9))
-        KB.append(Rule(("f2", 1), ("acidic", 0), 0.9))
+        KB.append(Rule(("f1", 1), ("acidic", 1), 1))
+        KB.append(Rule(("f2", 1), ("acidic", 0), 1))
     else:
         pass
     return KB

@@ -27,15 +27,14 @@ class SimpleEnv(mesa.Model):
         self.Ks = Knowledge_Structure(self.model)
         self.statistics = Statistics(self)
         self.update_world()
-        #self.statistics.counting(cell_contents)
         self.running = True
         self.statistics.collect_statistics()
 
     def update_world(self):
-
+        self.statistics.rezero_item_dict()
         for (contents, x, y) in self.grid.coord_iter():
-            cell_contents = self.Ks.forward_chaining_from_contents(contents)
-            for (attribute, value) in cell_contents:
+            new_cell_contents, old_cell_contents = self.Ks.forward_chaining_from_contents(contents)
+            for (attribute, value) in new_cell_contents:
                 if attribute == "acidic":
                     a = Patch(self.i, self, value)
                     self.i += 1
@@ -55,11 +54,14 @@ class SimpleEnv(mesa.Model):
                         self.grid.place_agent(a, (x, y))
                 else:
                     print("no idea what you're doing!")
-            self.statistics.counting(cell_contents)
+
+
+            self.statistics.counting(new_cell_contents+old_cell_contents)
 
 
     def step(self):
         self.update_world()
+        #self.statistics.collect_statistics()
         self.schedule.step()
 
     def run_model(self, n):

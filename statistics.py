@@ -19,6 +19,10 @@ class Statistics:
             C[tuple(new_key)] = 0
         return C
 
+    def rezero_item_dict(self):
+        for key in self.item_dict.keys():
+            self.item_dict[key]=0
+
 
     def counting(self, cell_item):
         d = {}

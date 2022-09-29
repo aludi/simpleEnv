@@ -83,7 +83,7 @@ def server_main_call(model):
 
 
     server = mesa.visualization.ModularServer(
-        SimpleEnv, [grid], "Simple Env Model", {"N": 0, "width": 50, "height": 50, "model":model}
+        SimpleEnv, [grid], "Simple Env Model", {"N": 0, "width": 5, "height": 5, "model":model}
     )
     server.port = 8521  # The default
     server.launch()

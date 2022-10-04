@@ -120,11 +120,10 @@ class Knowledge_Structure:
 
 def domain(model):
     D = {}
-    if model == "M1" or model == "M2":
+    if model == "M1" or model == "M2" or model == "M3":
         D_list = [("acidic", 1, 0), ("f1", 0, 1), ("f2", 0, 1)]
         for (name, o1, o2) in D_list:
             D[name] = Event(name, o1, o2)
-
     else:
         D = {}
     return D
@@ -155,6 +154,14 @@ def rules(model):
         KB.append(Rule([("acidic", 1)], ("acidic", 0), 0.025))
         KB.append(Rule([("acidic", 1), ("f1", 1)], ("acidic", 1), 1))
         KB.append(Rule([("acidic", 0), ("f2", 0)], ("acidic", 0), 1))
+
+    elif model == "M3":
+        KB.append(Rule([("", "")], ("acidic", 1), 0.9))
+        KB.append(Rule([("acidic", 1)], ("f1", 1), 0.5))
+        KB.append(Rule([("acidic", 0)], ("f2", 1), 0.5))
+        KB.append(Rule([("acidic", 1), ("f1", 1)], ("acidic", 0), 0.4))
+
+
 
     else:
         pass

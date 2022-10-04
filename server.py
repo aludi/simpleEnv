@@ -79,7 +79,7 @@ def agent_portrayal(agent):
     return portrayal
 
 def server_main_call(model):
-    w= 25
+    w = 25
     h = 25
     grid = mesa.visualization.CanvasGrid(agent_portrayal, w, h, 500, 500)
 
@@ -89,4 +89,4 @@ def server_main_call(model):
     server.port = 8521  # The default
     server.launch()
 
-#server_main_call("M1")
+#server_main_call("M3")

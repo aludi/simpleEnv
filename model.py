@@ -33,8 +33,8 @@ class SimpleEnv(mesa.Model):
     def update_world(self):
         self.statistics.rezero_item_dict()
         for (contents, x, y) in self.grid.coord_iter():
-            new_cell_contents, old_cell_contents = self.Ks.forward_chaining_from_contents(contents)
-            for (attribute, value) in new_cell_contents:
+            new_facts, changed_facts, unchanged_facts = self.Ks.forward_chaining_from_contents(contents)
+            for (attribute, value) in new_facts:
                 if attribute == "acidic":
                     a = Patch(self.i, self, value)
                     self.i += 1
@@ -56,12 +56,25 @@ class SimpleEnv(mesa.Model):
                     print("no idea what you're doing!")
 
 
-            self.statistics.counting(new_cell_contents+old_cell_contents)
+            del_list = []
+            for (attribute, value) in changed_facts:
+                for item in contents:
+                    if attribute == "acidic" and type(item) == Patch:
+                        item.set_value(value)
+                    elif attribute == "f1" and type(item) == Flower1:
+                        if value == 0:
+                            del_list.append(item)
+                    elif attribute == "f2" and type(item) == Flower2:
+                        if value == 0:
+                            del_list.append(item)
+            for item in del_list:
+                self.grid.remove_agent(item)
+                self.schedule.remove(item)
+            self.statistics.counting(new_facts+changed_facts+unchanged_facts)
 
 
     def step(self):
         self.update_world()
-        #self.statistics.collect_statistics()
         self.schedule.step()
 
     def run_model(self, n):

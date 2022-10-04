@@ -9,7 +9,7 @@ def agent_portrayal(agent):
         if agent.value == 1:
             portrayal = {
                 "Shape": "rect",
-                "Filled": "#b2de27",
+                "Filled": "#b2de27",    # dark green, base
                 "Layer": 1,
                 "Color": "#b2de27",
                 "w":1,
@@ -18,7 +18,7 @@ def agent_portrayal(agent):
         else:
             portrayal = {
                 "Shape": "rect",
-                "Filled": "#6ed747",
+                "Filled": "#6ed747",    # light green, acidic
                 "Layer": 1,
                 "Color": "#6ed747",
                 "w": 1,
@@ -28,7 +28,7 @@ def agent_portrayal(agent):
     elif type(agent) == Flower2:
         portrayal = {
             "Shape": "circle",
-            "Filled": "#FFC300",
+            "Filled": "#FFC300",    # yellow = flower 2 = likes base
             "Layer": 3,
             "Color": "#FFC300",
             "r": 0.5,
@@ -36,7 +36,7 @@ def agent_portrayal(agent):
     elif type(agent) == Flower1:
         portrayal = {
             "Shape": "circle",
-            "Filled": "#FF5733",
+            "Filled": "#FF5733",    # red = flower1 = likes acid
             "Layer": 2,
             "Color": "#FF5733",
             "r": 0.5,
@@ -79,11 +79,14 @@ def agent_portrayal(agent):
     return portrayal
 
 def server_main_call(model):
-    grid = mesa.visualization.CanvasGrid(agent_portrayal, 50, 50, 500, 500)
-
+    w= 25
+    h = 25
+    grid = mesa.visualization.CanvasGrid(agent_portrayal, w, h, 500, 500)
 
     server = mesa.visualization.ModularServer(
-        SimpleEnv, [grid], "Simple Env Model", {"N": 0, "width": 5, "height": 5, "model":model}
+        SimpleEnv, [grid], "Simple Env Model", {"N": 0, "width": w, "height": h, "model":model}
     )
     server.port = 8521  # The default
     server.launch()
+
+#server_main_call("M1")

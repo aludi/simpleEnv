@@ -22,6 +22,10 @@ class Patch(mesa.Agent):
         super().__init__(unique_id, model)
         self.value = acidic
         self.node_name = "acidic"
+        self.birthday = model.schedule.time
+
+    def set_value(self, value):
+        self.value = value
 
 
 class Flower1(mesa.Agent):
@@ -29,10 +33,11 @@ class Flower1(mesa.Agent):
         super().__init__(unique_id, model)
         self.node_name = "f1"
         self.value = 1
-
+        self.birthday = model.schedule.time
 
 class Flower2(mesa.Agent):
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
         self.node_name = "f2"
         self.value=1
+        self.birthday = model.schedule.time

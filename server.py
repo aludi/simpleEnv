@@ -1,6 +1,6 @@
 import mesa
 from model import SimpleEnv
-from agents import WalkAgent, Patch, Flower1, Flower2
+from agents import Walker, Patch, Flower1, Flower2
 
 
 def agent_portrayal(agent):
@@ -42,41 +42,17 @@ def agent_portrayal(agent):
             "r": 0.5,
         }
 
-    return portrayal
-
-
-
-    if type(agent) == WalkAgent:
-
-
+    elif type(agent) == Walker:
         portrayal = {
             "Shape": "circle",
-            "Filled": agent.color,
-            "Layer": 1,
-            "Color": agent.color,
-            "r": 0.5,
-        }
-
-        if agent.state == "dead":
-            portrayal = {
-                "Shape": "img/skull.png",
-                "Filled": agent.color,
-                "Layer": 1,
-                "Color": agent.color,
-                "r": 0.5,
-            }
-
-    else:
-        portrayal = {
-            "Shape": "rect",
-            "Filled": "orange",
-            "Layer": 0,
-            "Color": "orange",
-            "h": 3,
-            "w":3
+            "Filled": "black",  # walker
+            "Layer": 5,
+            "Color": "black",
+            "r": 0.25,
         }
 
     return portrayal
+
 
 def server_main_call(model):
     w = 25
@@ -84,9 +60,9 @@ def server_main_call(model):
     grid = mesa.visualization.CanvasGrid(agent_portrayal, w, h, 500, 500)
 
     server = mesa.visualization.ModularServer(
-        SimpleEnv, [grid], "Simple Env Model", {"N": 0, "width": w, "height": h, "model":model}
+        SimpleEnv, [grid], "Simple Env Model", {"N": 10, "width": w, "height": h, "model":model}
     )
     server.port = 8521  # The default
     server.launch()
 
-#server_main_call("M3")
+server_main_call("M3")

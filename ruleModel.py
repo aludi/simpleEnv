@@ -1,5 +1,5 @@
 import random
-
+from agents import Walker
 
 
 class Event:
@@ -45,7 +45,8 @@ class Knowledge_Structure:
                     rules_fired.append(rule)
         else:
             for item in content_list:
-                unchanged_facts.append((item.node_name, item.value))
+                if type(item) is not Walker:
+                    unchanged_facts.append((item.node_name, item.value))
             for rule in self.rules:
                 premise = rule.antecedent
                 premise_true = True

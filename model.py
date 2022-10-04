@@ -1,14 +1,10 @@
 import mesa
-from agents import WalkAgent, Patch, Flower1, Flower2
+from agents import Walker, Patch, Flower1, Flower2
 import random
 import bn
 from ruleModel import Knowledge_Structure
 from statistics import Statistics
 from colour import Color
-
-
-
-
 
 
 class SimpleEnv(mesa.Model):
@@ -18,7 +14,7 @@ class SimpleEnv(mesa.Model):
     highly skewed distribution of wealth.
     """
 
-    def __init__(self, N=0, width=10, height=10, model="M1"):
+    def __init__(self, N, width=10, height=10, model="M1"):
         self.i = 0
         self.num_agents = N
         self.grid = mesa.space.MultiGrid(width, height, True)
@@ -27,8 +23,25 @@ class SimpleEnv(mesa.Model):
         self.Ks = Knowledge_Structure(self.model)
         self.statistics = Statistics(self)
         self.update_world()
+        self.create_agents()
         self.running = True
         self.statistics.collect_statistics()
+
+    def create_agents(self):
+        self.walkerAgents = []
+        x = 0
+        while x < self.num_agents:
+            a = Walker(self.i, self, True, True)
+            self.i += 1
+            self.schedule.add(a)
+            self.walkerAgents.append(a)
+            x = self.random.randrange(self.grid.width)
+            y = self.random.randrange(self.grid.height)
+            self.grid.place_agent(a, (x, y))
+
+    def agent_movement(self):
+        for agents in self.walkerAgents:
+            agents.move()
 
     def update_world(self):
         self.statistics.rezero_item_dict()
@@ -54,8 +67,6 @@ class SimpleEnv(mesa.Model):
                         self.grid.place_agent(a, (x, y))
                 else:
                     print("no idea what you're doing!")
-
-
             del_list = []
             for (attribute, value) in changed_facts:
                 for item in contents:
@@ -72,9 +83,9 @@ class SimpleEnv(mesa.Model):
                 self.schedule.remove(item)
             self.statistics.counting(new_facts+changed_facts+unchanged_facts)
 
-
     def step(self):
         self.update_world()
+        self.agent_movement()
         self.schedule.step()
 
     def run_model(self, n):

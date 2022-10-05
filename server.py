@@ -1,6 +1,7 @@
 import mesa
 from model import SimpleEnv
 from agents import Walker, Patch, Flower1, Flower2
+import os, sys, subprocess
 
 
 def agent_portrayal(agent):
@@ -60,13 +61,22 @@ def server_main_call(model):
     h = 25
     grid = mesa.visualization.CanvasGrid(agent_portrayal, w, h, 500, 500)
 
-
     server = mesa.visualization.ModularServer(
         SimpleEnv, [grid], "Simple Env Model", {"N": 2, "width": w, "height": h, "model": model}
     )
-
     server.port = 8521  # The default
     server.launch()
+
+    html = ""
+
+    for file in ["out/agent_data/generated/M3_alice_pic.png", "out/agent_data/generated/M3_bob_pic.png"]:
+        html += f"<img src='{file}'/><br>"
+
+    with open("index.html", "w") as outputfile:
+        outputfile.write(html)
+
+    opener = "open" if sys.platform == "darwin" else "xdg-open"
+    subprocess.call([opener, 'index.html'])
 
 if __name__ == "__main__":
     server_main_call("M3")

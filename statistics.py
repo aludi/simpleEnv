@@ -52,7 +52,7 @@ class Statistics:
             sum += (self.item_dict[key] / total) * 100
         print(sum)
         # convert to csv file
-        with open(f"out/{self.model.model}.csv", 'w') as csvfile:
+        with open(f"out/data/{self.model.model}.csv", 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=self.df[0].keys(), extrasaction='ignore')
             writer.writeheader()
             for data in self.df:

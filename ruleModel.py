@@ -1,5 +1,6 @@
 import random
 from agents import Walker
+import bn
 
 
 class Event:
@@ -13,18 +14,44 @@ class Rule:
         self.antecedent = antecedent    #list of the shape [(name, value), (name, value)...])
         (self.c_nn, self.c_val) = consequent
         self.p = probability
-
         list_premise = []
         for (name, value) in self.antecedent:
-            list_premise += f"{name} : {value}"
+            list_premise.append(f"{name} : {value}")
         str_premise = ",".join(list_premise)
         self.rule_name = f"{str_premise} --> {self.c_nn}:{self.c_val}"
 
 
 class Knowledge_Structure:
     def __init__(self, model):
+        self.model_name = model
         self.domain = domain(model)
         self.rules = rules(model)
+        self.arcs = self.find_causal_structure()
+        self.print_arcs()
+        print()
+
+
+    def find_causal_structure(self):
+        list_causal = []
+        for node in self.domain.keys():
+            for rule in self.rules:
+                if rule.c_nn == node:
+                    for (atr, val) in rule.antecedent:
+                        if atr != "":
+                            list_causal.append((atr, rule.c_nn))
+        unpruned_list = list(dict.fromkeys(list_causal))
+        rm_list = []
+        for (arc_p, arc_c) in unpruned_list:
+            if arc_p == arc_c:
+                rm_list.append((arc_p, arc_c))
+        for x in rm_list:
+            unpruned_list.remove(x)
+        #print(unpruned_list)
+        return unpruned_list
+
+    def print_arcs(self):
+        for (p, c) in self.arcs:
+            print(f"{p} -> {c}")
 
     def forward_chaining_from_contents(self, content_list):
         new_facts = []
@@ -119,9 +146,10 @@ class Knowledge_Structure:
         else:
             return self.domain[name].outcome1
 
+
 def domain(model):
     D = {}
-    if model == "M1" or model == "M2" or model == "M3":
+    if model in ["M1", "M2", "M3", "M4"]:
         D_list = [("acidic", 1, 0), ("f1", 0, 1), ("f2", 0, 1)]
         for (name, o1, o2) in D_list:
             D[name] = Event(name, o1, o2)
@@ -158,12 +186,24 @@ def rules(model):
 
     elif model == "M3":
         KB.append(Rule([("", "")], ("acidic", 1), 0.9))
-        KB.append(Rule([("acidic", 1)], ("f1", 1), 0.5))
+        KB.append(Rule([("", "")], ("f1", 1), 0.5))
+        KB.append(Rule([("f1", 1)], ("acidic", 0), 0.4))
         KB.append(Rule([("acidic", 0)], ("f2", 1), 0.5))
-        KB.append(Rule([("acidic", 1), ("f1", 1)], ("acidic", 0), 0.4))
+
+    elif model == "M4":
+        KB.append(Rule([("", "")], ("f1", 1), 0.9))
+        KB.append(Rule([("", "")], ("acidic", 0), 0.9))
+        KB.append(Rule([("f1", 1)], ("acidic", 1), 0.9))
+        KB.append(Rule([("f1", 1)], ("f2", 1), 0.2))
+        KB.append(Rule([("f1", 1)], ("f1", 0), 0.2))
 
 
 
     else:
         pass
     return KB
+
+if __name__ == "__main__":
+    for model in ["M1", "M2", "M3", "M4"]:
+        ks = Knowledge_Structure(model)
+        bn.generate_ground_BN(ks)

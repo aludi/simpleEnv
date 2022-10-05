@@ -65,4 +65,5 @@ def server_main_call(model):
     server.port = 8521  # The default
     server.launch()
 
-server_main_call("M3")
+if __name__ == "__main__":
+    server_main_call("M4")

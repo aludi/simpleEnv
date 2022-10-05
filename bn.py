@@ -1,7 +1,7 @@
 import pyAgrum as gum
 import pyAgrum.lib.image as gim
 import random
-
+from ruleModel import Knowledge_Structure
 ### input BN
 
 def make_input_bn():
@@ -50,14 +50,33 @@ def get_node_name_from_id(id):
 
 ##### generate BNs
 
+def generate_ground_BN(ks):
+    bn = gum.BayesNet(ks.model_name)
+    for node in ks.domain.keys():
+        a = bn.add(gum.LabelizedVariable(node, node, 2))
+    for (arc_p, arc_c) in ks.arcs:
+        bn.addArc(arc_p, arc_c)
+
+    learner = gum.BNLearner(f"out/data/{ks.model_name}.csv", False)
+    bn_learned = learner.learnParameters(bn.dag())
+
+    ie = gum.LazyPropagation(bn_learned)
+    gim.exportInference(model=bn_learned, filename=f"out/grounded/ground_{ks.model_name}_pic.pdf", engine=ie,
+                        evs={})
+    gim.exportInference(model=bn, filename=f"out/inferenced/ground_{ks.model_name}_pic_a.pdf", engine=ie,
+                        evs={'acidic': 1})
+
+    output_file = f"output_bns/ground_{ks.model_name}.net"
+    gum.saveBN(bn_learned, output_file)
+
 def generate_BN(model_output):
-    learner = gum.BNLearner(f"out/{model_output}.csv", False)
+    learner = gum.BNLearner(f"out/data/{model_output}.csv", False)
     print(learner)
     bn = learner.learnBN()
     output_file = f"output_bns/{model_output}.net"
     gum.saveBN(bn, output_file)
     ie = gum.LazyPropagation(bn)
-    gim.exportInference(model=bn, filename=f"out/{model_output}_pic.pdf", engine=ie,
+    gim.exportInference(model=bn, filename=f"out/generated/{model_output}_pic.pdf", engine=ie,
                         evs={})
-    gim.exportInference(model=bn, filename=f"out/{model_output}_pic_a.pdf", engine=ie,
+    gim.exportInference(model=bn, filename=f"out/inferenced/{model_output}_pic_a.pdf", engine=ie,
                         evs={'acidic':1})

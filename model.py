@@ -23,7 +23,7 @@ class SimpleEnv(mesa.Model):
         self.Ks = Knowledge_Structure(self.model)
         self.statistics = Statistics(self)
         self.update_world()
-        self.create_agents()
+        #self.create_agents()
         self.running = True
         self.statistics.collect_statistics()
 
@@ -85,7 +85,7 @@ class SimpleEnv(mesa.Model):
 
     def step(self):
         self.update_world()
-        self.agent_movement()
+        #self.agent_movement()
         self.schedule.step()
 
     def run_model(self, n):

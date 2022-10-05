@@ -1,5 +1,4 @@
 import random
-from agents import Walker
 import bn
 
 
@@ -72,7 +71,7 @@ class Knowledge_Structure:
                     rules_fired.append(rule)
         else:
             for item in content_list:
-                if type(item) is not Walker:
+                if item.item_class is not "agent":
                     unchanged_facts.append((item.node_name, item.value))
             for rule in self.rules:
                 premise = rule.antecedent
@@ -191,10 +190,10 @@ def rules(model):
         KB.append(Rule([("acidic", 0)], ("f2", 1), 0.5))
 
     elif model == "M4":
-        KB.append(Rule([("", "")], ("f1", 1), 0.9))
-        KB.append(Rule([("", "")], ("acidic", 0), 0.9))
-        KB.append(Rule([("f1", 1)], ("acidic", 1), 0.9))
-        KB.append(Rule([("f1", 1)], ("f2", 1), 0.2))
+        KB.append(Rule([("", "")], ("f1", 1), 1))
+        KB.append(Rule([("", "")], ("acidic", 0), 1))
+        KB.append(Rule([("f1", 1)], ("acidic", 1), 0.99))
+        KB.append(Rule([("f1", 1)], ("f2", 1), 0.6))
         KB.append(Rule([("f1", 1)], ("f1", 0), 0.2))
 
 

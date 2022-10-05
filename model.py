@@ -17,31 +17,42 @@ class SimpleEnv(mesa.Model):
     def __init__(self, N, width=10, height=10, model="M1"):
         self.i = 0
         self.num_agents = N
+        self.agent_names = ["alice", "bob", "carol"]    # consistency
         self.grid = mesa.space.MultiGrid(width, height, True)
         self.schedule = mesa.time.RandomActivation(self)
         self.model = model
         self.Ks = Knowledge_Structure(self.model)
         self.statistics = Statistics(self)
         self.update_world()
-        #self.create_agents()
+        self.create_agents()
         self.running = True
         self.statistics.collect_statistics()
 
     def create_agents(self):
         self.walkerAgents = []
-        x = 0
-        while x < self.num_agents:
-            a = Walker(self.i, self, True, True)
+        it = 0
+        while it < self.num_agents:
+            a = Walker(self.i, self, True, True, self.agent_names[it])
             self.i += 1
             self.schedule.add(a)
             self.walkerAgents.append(a)
             x = self.random.randrange(self.grid.width)
             y = self.random.randrange(self.grid.height)
             self.grid.place_agent(a, (x, y))
+            it += 1
 
     def agent_movement(self):
         for agents in self.walkerAgents:
             agents.move()
+
+    def update_agents(self):
+        #self.agent_movement()
+        for agent in self.walkerAgents:
+            iter = self.grid.iter_neighbors(agent.pos, True, True, radius=1)
+            agent.observe(iter)
+            agent.create_bn()
+
+        pass
 
     def update_world(self):
         self.statistics.rezero_item_dict()
@@ -85,7 +96,7 @@ class SimpleEnv(mesa.Model):
 
     def step(self):
         self.update_world()
-        #self.agent_movement()
+        self.update_agents()
         self.schedule.step()
 
     def run_model(self, n):

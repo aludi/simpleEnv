@@ -4,7 +4,6 @@ from agents import Walker, Patch, Flower1, Flower2
 
 
 def agent_portrayal(agent):
-
     if type(agent) == Patch:
         if agent.value == 1:
             portrayal = {
@@ -54,16 +53,20 @@ def agent_portrayal(agent):
     return portrayal
 
 
+
+
 def server_main_call(model):
     w = 25
     h = 25
     grid = mesa.visualization.CanvasGrid(agent_portrayal, w, h, 500, 500)
 
+
     server = mesa.visualization.ModularServer(
-        SimpleEnv, [grid], "Simple Env Model", {"N": 10, "width": w, "height": h, "model":model}
+        SimpleEnv, [grid], "Simple Env Model", {"N": 2, "width": w, "height": h, "model": model}
     )
+
     server.port = 8521  # The default
     server.launch()
 
 if __name__ == "__main__":
-    server_main_call("M4")
+    server_main_call("M3")

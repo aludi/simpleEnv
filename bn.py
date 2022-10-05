@@ -69,9 +69,24 @@ def generate_ground_BN(ks):
     output_file = f"output_bns/ground_{ks.model_name}.net"
     gum.saveBN(bn_learned, output_file)
 
+def generate_agent_BN(model_output, agent_name):
+    learner = gum.BNLearner(f"out/agent_data/{model_output}_{agent_name}.csv", False)
+    bn = learner.learnBN()
+    output_file = f"out/agent_data/output_network/{model_output}_{agent_name}.net"
+    gum.saveBN(bn, output_file)
+    ie = gum.LazyPropagation(bn)
+    gim.exportInference(model=bn, filename=f"out/agent_data/generated/{model_output}_{agent_name}_pic.png", engine=ie,
+                        evs={})
+    try:
+        gim.exportInference(model=bn, filename=f"out/agent_data/inferenced/{model_output}_{agent_name}_pic_a.png", engine=ie,
+                        evs={'acidic': 1})
+        print(f"updated bayesian network of agent {agent_name}")
+
+    except gum.pyAgrum.InvalidArgument:
+        print("non-probabilistic environment")
+
 def generate_BN(model_output):
     learner = gum.BNLearner(f"out/data/{model_output}.csv", False)
-    print(learner)
     bn = learner.learnBN()
     output_file = f"output_bns/{model_output}.net"
     gum.saveBN(bn, output_file)

@@ -42,7 +42,7 @@ def find_parents(node_name):
     return list_parents
 
 
-def get_node_name_from_id(id):
+def get_node_name_from_id(id, network):
     bn = gum.loadBN("input_bns/acidic.net")
     for name in bn.names():
         if bn.idFromName(name) == id:
@@ -70,6 +70,8 @@ def generate_ground_BN(ks):
     gum.saveBN(bn_learned, output_file)
 
 def generate_agent_BN(model_output, agent_name):
+    file = f"out/agent_data/{model_output}_{agent_name}.csv"
+
     learner = gum.BNLearner(f"out/agent_data/{model_output}_{agent_name}.csv", False)
     bn = learner.learnBN()
     output_file = f"out/agent_data/output_network/{model_output}_{agent_name}.net"
@@ -84,6 +86,34 @@ def generate_agent_BN(model_output, agent_name):
 
     except gum.pyAgrum.InvalidArgument:
         print("non-probabilistic environment")
+
+    dict_representation_network = {}
+    for node in bn.names():
+        l = []
+        for n in bn.parents(node):
+            for name in bn.names():
+                if bn.idFromName(name) == n:
+                    l.append(name)
+        dict_representation_network[node] = l
+    return dict_representation_network
+
+def predict_output(event_name, value_dict, bn_file):
+    bn = gum.loadBN(bn_file)
+    ie = gum.LazyPropagation(bn)
+    try:
+        ie.setEvidence(value_dict)
+    except gum.pyAgrum.NotFound:
+        print("agent doesn't know about this thing yet")
+
+    try:
+        x = ie.posterior(event_name)
+    except gum.pyAgrum.NotFound:
+        print("agent doesn't know about this thing yet")
+        x = {}
+        x[0] = 1
+        x[1] = 0
+    return x[0], x[1]
+
 
 def generate_BN(model_output):
     learner = gum.BNLearner(f"out/data/{model_output}.csv", False)

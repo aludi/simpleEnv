@@ -44,6 +44,8 @@ class Walker(mesa.Agent):
         self.taste = taste
         self.observation = []
         self.domain_knowledge = []
+        self.bn_struct = []
+        self.bn_file = f"out/agent_data/output_network/{model.model}_{name}.net"
 
     def move(self):
         possible_steps = self.model.grid.get_neighborhood(
@@ -58,23 +60,25 @@ class Walker(mesa.Agent):
         for item in iter:
             if item.item_class != "agent":
                 dict_obs[item.pos][item.node_name] = item.value
-                self.domain_knowledge.append(item.node_name)    # the agent now knows that this class of object exists
+                if item.node_name not in self.domain_knowledge:
+                    self.domain_knowledge.append(item.node_name)    # the agent now knows that this class of object exists
         for pos_key in dict_obs.keys():
             d = dict_obs[pos_key]
-            for obj in self.domain_knowledge:
-                if obj not in d.keys():
-                    d[obj] = 0
             self.observation.append(d)
 
+
         with open(f"out/agent_data/{self.model.model}_{self.agent_name}.csv", 'w') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=self.observation[0].keys(), extrasaction='ignore')
+            writer = csv.DictWriter(csvfile, fieldnames=self.domain_knowledge, extrasaction='ignore')
             writer.writeheader()
             for data in self.observation:
+                for obj in self.domain_knowledge:
+                    if obj not in data.keys():
+                        data[obj] = 0
                 writer.writerow(data)
 
 
     def create_bn(self):
-        bn.generate_agent_BN(self.model.model, self.agent_name)
+        self.bn_struct = bn.generate_agent_BN(self.model.model, self.agent_name)
 
 
 

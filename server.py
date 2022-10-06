@@ -2,6 +2,7 @@ import mesa
 from model import SimpleEnv
 from agents import Walker, Patch, Flower1, Flower2
 import os, sys, subprocess
+from viz import AttributeElement, AgentProbabilities
 
 
 def agent_portrayal(agent):
@@ -48,11 +49,67 @@ def agent_portrayal(agent):
             "Filled": "black",  # walker
             "Layer": 5,
             "Color": "black",
-            "r": 0.25,
+            "r": 0.25
+
         }
 
     return portrayal
 
+def p_a(agent):
+    if type(agent) == Walker:
+        if agent.agent_name == "alice":
+            portrayal = {
+                "Shape": f"out/agent_data/generated/{agent.model.model}_{agent.agent_name}_pic.png",
+                "Filled": "black",  # walker
+                "Layer": 5,
+                "Color": "black",
+                "scale":20
+            }
+        else:
+            portrayal = {
+                "Shape": "circle",
+                "Filled": "white",  # walker
+                "Layer": 1,
+                "Color": "white",
+                "r": 1
+            }
+    else:
+        portrayal = {
+            "Shape": "circle",
+            "Filled": "white",  # walker
+            "Layer": 1,
+            "Color": "white",
+            "r": 1
+        }
+    return portrayal
+
+def p_b(agent):
+    if type(agent) == Walker:
+        if agent.agent_name == "bob":
+            portrayal = {
+                "Shape": f"out/agent_data/generated/{agent.model.model}_{agent.agent_name}_pic.png",
+                "Filled": "black",  # walker
+                "Layer": 5,
+                "Color": "black",
+                "scale":20
+            }
+        else:
+            portrayal = {
+                "Shape": "circle",
+                "Filled": "white",  # walker
+                "Layer": 1,
+                "Color": "white",
+                "r": 1
+            }
+    else:
+        portrayal = {
+            "Shape": "circle",
+            "Filled": "white",  # walker
+            "Layer": 1,
+            "Color": "white",
+            "r": 1
+        }
+    return portrayal
 
 
 
@@ -60,23 +117,21 @@ def server_main_call(model):
     w = 25
     h = 25
     grid = mesa.visualization.CanvasGrid(agent_portrayal, w, h, 500, 500)
+    p1 = AgentProbabilities("alice")
+    p2 = AgentProbabilities("bob")
+
+
+    m = AttributeElement("model")
+    d = AttributeElement("domain")
+    r = AttributeElement("rules")
+    a = AttributeElement("causes")
+
 
     server = mesa.visualization.ModularServer(
-        SimpleEnv, [grid], "Simple Env Model", {"N": 2, "width": w, "height": h, "model": model}
+        SimpleEnv, [m, grid, d, a, p1, p2], "Simple Env Model", {"N": 2, "width": w, "height": h, "model": model}
     )
     server.port = 8521  # The default
     server.launch()
 
-    html = ""
-
-    for file in ["out/agent_data/generated/M3_alice_pic.png", "out/agent_data/generated/M3_bob_pic.png"]:
-        html += f"<img src='{file}'/><br>"
-
-    with open("index.html", "w") as outputfile:
-        outputfile.write(html)
-
-    opener = "open" if sys.platform == "darwin" else "xdg-open"
-    subprocess.call([opener, 'index.html'])
-
 if __name__ == "__main__":
-    server_main_call("M3")
+    server_main_call("M1")

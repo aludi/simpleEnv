@@ -17,7 +17,7 @@ class Rule:
         for (name, value) in self.antecedent:
             list_premise.append(f"{name} : {value}")
         str_premise = ",".join(list_premise)
-        self.rule_name = f"{str_premise} --> {self.c_nn}:{self.c_val}"
+        self.rule_name = f"{str_premise} --> {self.c_nn}:{self.c_val}   ({self.p})"
 
 
 class Knowledge_Structure:
@@ -28,6 +28,19 @@ class Knowledge_Structure:
         self.arcs = self.find_causal_structure()
         self.print_arcs()
         print()
+
+    def render_rules(self):
+        l = []
+        for rule in self.rules:
+            l.append(rule.rule_name)
+        return l
+
+    def render_arcs(self):
+        l = []
+        for (p, c) in self.arcs:
+            l.append(f"\'{p}\' affects \'{c}\'")
+        return ", ".join(l)
+
 
 
     def find_causal_structure(self):
@@ -186,6 +199,7 @@ def rules(model):
     elif model == "M3":
         KB.append(Rule([("", "")], ("acidic", 1), 0.9))
         KB.append(Rule([("", "")], ("f1", 1), 0.5))
+        KB.append(Rule([("", "")], ("f2", 1), 0.1))
         KB.append(Rule([("f1", 1)], ("acidic", 0), 0.4))
         KB.append(Rule([("acidic", 0)], ("f2", 1), 0.5))
 

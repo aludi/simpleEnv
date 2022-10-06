@@ -110,8 +110,8 @@ class SimpleEnv(mesa.Model):
 
     def prediction(self):
         print("Running tournament")
-        print("Selecting 5 positions")
-        for i in range(0, 5):
+        print("Selecting 10 positions")
+        for i in range(0, 10):
             x = self.random.randrange(self.grid.width)
             y = self.random.randrange(self.grid.height)
             pos = (x, y) # is a random position
